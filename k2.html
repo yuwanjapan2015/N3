@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Kuis N3 Hari 2</title>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: satu kolom sempit, soal berurutan, bilah progres menempel di atas, hasil muncul di bawah setelah Finish */
+:root{
+  --bg:#f6f7fa; --surface:#ffffff; --fg:#1b1f2a; --muted:#5c6475; --line:#d9dde6;
+  --accent:#2c4f9e; --accent-fg:#ffffff; --pick:#e6ecfa; --good:#17663a; --good-bg:#e3f3ea; --bad:#a32424; --bad-bg:#fbe7e7;
+  --font-body:'Inter','Noto Sans JP',system-ui,sans-serif; --font-jp:'Noto Sans JP','Hiragino Sans','Yu Gothic',sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12151c; --surface:#1b2029; --fg:#e8ebf2; --muted:#a2a9b8; --line:#333a48;
+  --accent:#8fb0ff; --accent-fg:#101624; --pick:#26324f; --good:#7ddba0; --good-bg:#17301f; --bad:#ff9d9d; --bad-bg:#3a1c1c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12151c; --surface:#1b2029; --fg:#e8ebf2; --muted:#a2a9b8; --line:#333a48;
+  --accent:#8fb0ff; --accent-fg:#101624; --pick:#26324f; --good:#7ddba0; --good-bg:#17301f; --bad:#ff9d9d; --bad-bg:#3a1c1c; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:16px;line-height:1.55}
+.wrap{max-width:720px;margin:0 auto;padding-block:20px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1{font-size:1.5rem;margin:0 0 4px;font-family:var(--font-jp);text-wrap:balance}
+.lead{color:var(--muted);margin:0 0 16px;font-size:.95rem}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:8px 0 10px;border-bottom:1px solid var(--line);margin-bottom:16px}
+.bar-row{display:flex;justify-content:space-between;gap:12px;font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.track{height:6px;background:var(--line);border-radius:3px;margin-top:6px;overflow:hidden}
+.fill{height:100%;width:0;background:var(--accent);transition:width .2s}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 14px 12px;margin:0 0 12px;min-width:0}
+.q legend{padding:0}
+.tag{display:inline-block;font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.qt{font-family:var(--font-jp);font-size:1.05rem;font-weight:500;margin:0 0 10px;overflow-wrap:anywhere}
+.passage{font-family:var(--font-jp);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:0 0 10px;font-size:.95rem;line-height:1.8}
+.opt{display:flex;gap:10px;align-items:flex-start;min-height:44px;padding:9px 10px;border:1px solid var(--line);border-radius:8px;margin-bottom:6px;cursor:pointer;font-family:var(--font-jp);overflow-wrap:anywhere}
+.opt input{margin-top:5px;accent-color:var(--accent);flex:none}
+.opt:has(input:checked){background:var(--pick);border-color:var(--accent)}
+.opt:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.locked .opt{cursor:default}
+.opt.right{background:var(--good-bg);border-color:var(--good)}
+.opt.wrong{background:var(--bad-bg);border-color:var(--bad)}
+.act{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:18px}
+button{font:inherit;min-height:44px;padding:0 20px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:var(--accent-fg);font-weight:600;cursor:pointer}
+button.ghost{background:transparent;color:var(--accent)}
+button:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.hint{color:var(--muted);font-size:.85rem}
+.res{margin-top:24px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
+.score{font-size:2.2rem;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.res h2{font-size:1.05rem;margin:18px 0 8px}
+.rv{border-top:1px solid var(--line);padding:12px 0}
+.rv .qt{margin-bottom:6px}
+.line{font-size:.92rem;font-family:var(--font-jp)}
+.line b.n{color:var(--bad)} .line b.y{color:var(--good)}
+.ex{margin:6px 0 0;font-size:.92rem;color:var(--muted)}
+</style>
+<style>[hidden]{display:none!important}img{max-width:100%}</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <h1>JLPT N3 クイズ · Hari 2</h1>
+  <p class="lead">27 soal dari materi Hari 2: bacaan kanji, arti kata, menulis kanji, bunpou, dan dokkai. Jawab semua, lalu tekan Finish.</p>
+
+  <div class="bar" role="status">
+    <div class="bar-row"><span id="cnt">Terjawab 0 / 27</span><span id="pct">0%</span></div>
+    <div class="track"><div class="fill" id="fill"></div></div>
+  </div>
+
+  <form id="quiz" novalidate></form>
+
+  <div class="act">
+    <button type="button" id="finish" disabled>Finish</button>
+    <span class="hint" id="hint">Tombol aktif setelah semua soal terjawab.</span>
+  </div>
+
+  <section class="res" id="res" hidden aria-live="polite"></section>
+</div>
+
+<script>
+var Q=[
+{
+"t": "Bacaan kanji",
+"q": "残業",
+"o": [
+"ざんぎょう",
+"ざんごう",
+"ぜんぎょう",
+"ざんきょう"
+],
+"a": 0,
+"e": "残業 dibaca ざんぎょう (lembur). 残 = ざん, 業 = ぎょう."
+},
+{
+"t": "Bacaan kanji",
+"q": "出張",
+"o": [
+"しゅっぱり",
+"しゅっちょう",
+"しゅちょう",
+"でちょう"
+],
+"a": 1,
+"e": "出張 dibaca しゅっちょう (dinas luar kota), dengan 出 dibaca しゅっ (bunyi kecil)."
+},
+{
+"t": "Bacaan kanji",
+"q": "締め切り",
+"o": [
+"ていきり",
+"しまきり",
+"しめきり",
+"しめぎり"
+],
+"a": 2,
+"e": "締め切り dibaca しめきり (tenggat waktu)."
+},
+{
+"t": "Bacaan kanji",
+"q": "同僚",
+"o": [
+"どうろう",
+"どうりょう",
+"どうりゅう",
+"とうりょう"
+],
+"a": 1,
+"e": "同僚 dibaca どうりょう (rekan kerja). 僚 = りょう."
+},
+{
+"t": "Bacaan kanji",
+"q": "給料",
+"o": [
+"きゅうろう",
+"きゅりょう",
+"きゅうりょう",
+"きゅうりゅう"
+],
+"a": 2,
+"e": "給料 dibaca きゅうりょう (gaji). 給 = きゅう, 料 = りょう."
+},
+{
+"t": "Bacaan kanji",
+"q": "契約",
+"o": [
+"けいやく",
+"げいやく",
+"けいかく",
+"けいよく"
+],
+"a": 0,
+"e": "契約 dibaca けいやく (kontrak). Jangan tertukar dengan 計画 (けいかく, rencana)."
+},
+{
+"t": "Bacaan kanji",
+"q": "責任",
+"o": [
+"せきじん",
+"しゃくにん",
+"せっにん",
+"せきにん"
+],
+"a": 3,
+"e": "責任 dibaca せきにん (tanggung jawab). 責 = せき, 任 = にん."
+},
+{
+"t": "Bacaan kanji",
+"q": "遅刻",
+"o": [
+"ちかく",
+"ちこく",
+"じこく",
+"ちごく"
+],
+"a": 1,
+"e": "遅刻 dibaca ちこく (terlambat). 遅 = ち, 刻 = こく."
+},
+{
+"t": "Arti kata",
+"q": "上司",
+"o": [
+"bawahan",
+"atasan",
+"pelanggan",
+"rekan kerja"
+],
+"a": 1,
+"e": "上司 (じょうし) berarti atasan. Rekan kerja = 同僚 (どうりょう)."
+},
+{
+"t": "Arti kata",
+"q": "昇進",
+"o": [
+"gaji",
+"kontrak",
+"promosi jabatan",
+"perjalanan dinas"
+],
+"a": 2,
+"e": "昇進 (しょうしん) berarti promosi jabatan."
+},
+{
+"t": "Arti kata",
+"q": "担当",
+"o": [
+"penanggung jawab, menangani",
+"terlambat",
+"tidak hadir",
+"meeting"
+],
+"a": 0,
+"e": "担当 (たんとう) berarti penanggung jawab atau menangani. Contoh: 私が担当です."
+},
+{
+"t": "Arti kata",
+"q": "欠席",
+"o": [
+"terlambat",
+"lembur",
+"tidak hadir",
+"pulang cepat"
+],
+"a": 2,
+"e": "欠席 (けっせき) berarti tidak hadir. Lawannya 出席 (しゅっせき, hadir)."
+},
+{
+"t": "Arti kata",
+"q": "承知",
+"o": [
+"menolak",
+"mengerti, menyetujui",
+"menunggu",
+"mengundang"
+],
+"a": 1,
+"e": "承知 (しょうち) berarti mengerti atau menyetujui, bentuk sopan. 承知しました = baik, saya mengerti."
+},
+{
+"t": "Menulis kanji",
+"q": "「かいぎ」を漢字で書くと？",
+"o": [
+"会議",
+"会義",
+"合議",
+"会儀"
+],
+"a": 0,
+"e": "かいぎ = 会議 (rapat). 議 = membahas."
+},
+{
+"t": "Menulis kanji",
+"q": "「れんらく」を漢字で書くと？",
+"o": [
+"運絡",
+"連絡",
+"連給",
+"速絡"
+],
+"a": 1,
+"e": "れんらく = 連絡 (menghubungi). 連 = menyambung, 絡 = mengikat."
+},
+{
+"t": "Menulis kanji",
+"q": "「しりょう」を漢字で書くと？",
+"o": [
+"資科",
+"質料",
+"資料",
+"賃料"
+],
+"a": 2,
+"e": "しりょう = 資料 (dokumen, materi). 料 = bahan, jangan tertukar dengan 科."
+},
+{
+"t": "Bunpou",
+"q": "毎日練習したので、泳げる（　　）なりました。",
+"o": [
+"ように",
+"ことに",
+"ばかり",
+"ところ"
+],
+"a": 0,
+"e": "Perubahan kemampuan (jadi bisa) memakai ～ようになる: 泳げるようになりました."
+},
+{
+"t": "Bunpou",
+"q": "会社の決定で、来月から東京支店で働く（　　）なりました。",
+"o": [
+"ように",
+"ことに",
+"はずに",
+"ところに"
+],
+"a": 1,
+"e": "Keputusan dari pihak luar (perusahaan) memakai ～ことになる: 働くことになりました."
+},
+{
+"t": "Bunpou",
+"q": "田中さんは来ると言ったから、もうすぐ来る（　　）です。",
+"o": [
+"はず",
+"ように",
+"ことに",
+"ばかり"
+],
+"a": 0,
+"e": "Dugaan beralasan memakai ～はずだ: 来るはずです = seharusnya akan datang."
+},
+{
+"t": "Bunpou",
+"q": "最近、やっと一人で料理が（　　）ようになりました。",
+"o": [
+"できる",
+"できた",
+"できて",
+"できない"
+],
+"a": 0,
+"e": "Pola ～ようになる memakai bentuk kamus: できるようになりました = akhirnya jadi bisa memasak."
+},
+{
+"t": "Bunpou",
+"q": "この道は近いから、10分で着く（　　）です。",
+"o": [
+"ように",
+"ことに",
+"はず",
+"ばかり"
+],
+"a": 2,
+"e": "Dugaan beralasan: 10分で着くはずです = seharusnya tiba dalam 10 menit."
+},
+{
+"t": "Bunpou",
+"q": "子どもが成長して、自分で服を着る（　　）なりました。",
+"o": [
+"ように",
+"はず",
+"ことに",
+"ばかり"
+],
+"a": 0,
+"e": "Perubahan kemampuan: 着るようになりました = jadi bisa memakai baju sendiri."
+},
+{
+"t": "Bunpou",
+"q": "会議は来週の月曜日に（　　）ことになりました。",
+"o": [
+"開く",
+"開いた",
+"開いて",
+"開き"
+],
+"a": 0,
+"e": "Pola ～ことになる memakai bentuk kamus: 開くことになりました = diputuskan akan diadakan."
+},
+{
+"t": "Dokkai 1",
+"q": "山田さんが今ではできるようになったことは何ですか。",
+"o": [
+"出張に行くこと",
+"メールを書くこと",
+"上司に怒られること",
+"営業をやめること"
+],
+"a": 1,
+"e": "今ではメールが書けるようになりました: sekarang ia jadi bisa menulis email.",
+"p": "山田さんは先月から営業の仕事を担当しています。毎日、上司に報告をしなければなりません。最初は連絡の仕方が分かりませんでしたが、今ではメールが書けるようになりました。来月、大阪へ出張することになっています。"
+},
+{
+"t": "Dokkai 1",
+"q": "山田さんの来月の予定は何ですか。",
+"o": [
+"大阪へ出張に行く",
+"営業の仕事を始める",
+"メールの勉強をする",
+"会社をやめる"
+],
+"a": 0,
+"e": "来月、大阪へ出張することになっています: bulan depan ia dijadwalkan dinas ke Osaka.",
+"p": "山田さんは先月から営業の仕事を担当しています。毎日、上司に報告をしなければなりません。最初は連絡の仕方が分かりませんでしたが、今ではメールが書けるようになりました。来月、大阪へ出張することになっています。"
+},
+{
+"t": "Dokkai 2",
+"q": "明日の会議は何時からですか。",
+"o": [
+"午後2時から",
+"午前10時から",
+"夕方から",
+"まだ決まっていない"
+],
+"a": 1,
+"e": "Awalnya jam 2 siang, tetapi berubah menjadi 午前十時から (jam 10 pagi).",
+"p": "明日の会議は午後二時からのはずでしたが、部長が急に出張に行くことになったので、午前十時からに変わりました。資料は今日の夕方までに準備しておいてください。遅刻や欠席をする人は、前の日に連絡してください。"
+},
+{
+"t": "Dokkai 2",
+"q": "遅刻や欠席をする人は、どうしますか。",
+"o": [
+"資料を準備する",
+"会議を休む",
+"前の日に連絡する",
+"部長に出張を頼む"
+],
+"a": 2,
+"e": "遅刻や欠席をする人は、前の日に連絡してください: yang terlambat atau absen menghubungi sehari sebelumnya.",
+"p": "明日の会議は午後二時からのはずでしたが、部長が急に出張に行くことになったので、午前十時からに変わりました。資料は今日の夕方までに準備しておいてください。遅刻や欠席をする人は、前の日に連絡してください。"
+}
+];
+var N=Q.length, ans=new Array(N).fill(-1), done=false;
+var form=document.getElementById('quiz'), btn=document.getElementById('finish');
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function render(){
+  var h='';
+  Q.forEach(function(x,i){
+    h+='<fieldset class="q" id="q'+i+'" style="border:1px solid var(--line)"><legend><span class="tag">'+(i+1)+' / '+N+' · '+esc(x.t)+'</span></legend>';
+    if(x.p) h+='<div class="passage">'+esc(x.p)+'</div>';
+    h+='<p class="qt">'+esc(x.q)+'</p>';
+    x.o.forEach(function(o,j){
+      h+='<label class="opt" id="o'+i+'_'+j+'"><input type="radio" name="q'+i+'" id="r'+i+'_'+j+'" value="'+j+'"><span>'+(j+1)+'. '+esc(o)+'</span></label>';
+    });
+    h+='</fieldset>';
+  });
+  form.innerHTML=h;
+}
+function update(){
+  var n=ans.filter(function(v){return v>=0;}).length;
+  document.getElementById('cnt').textContent='Terjawab '+n+' / '+N;
+  document.getElementById('pct').textContent=Math.round(n/N*100)+'%';
+  document.getElementById('fill').style.width=(n/N*100)+'%';
+  btn.disabled=(n<N)||done;
+  document.getElementById('hint').textContent=n<N?'Tombol aktif setelah semua soal terjawab ('+(N-n)+' lagi).':'Semua terjawab. Tekan Finish untuk melihat hasil.';
+}
+form.addEventListener('change',function(e){
+  if(done||!e.target.name)return;
+  var i=parseInt(e.target.name.slice(1),10);
+  ans[i]=parseInt(e.target.value,10);
+  update();
+});
+btn.addEventListener('click',function(){
+  done=true; form.classList.add('locked');
+  var ok=0, wrong=[];
+  Q.forEach(function(x,i){
+    document.getElementById('r'+i+'_0');
+    for(var j=0;j<x.o.length;j++){document.getElementById('r'+i+'_'+j).disabled=true;}
+    document.getElementById('o'+i+'_'+x.a).classList.add('right');
+    if(ans[i]===x.a){ok++;} else {wrong.push(i); document.getElementById('o'+i+'_'+ans[i]).classList.add('wrong');}
+  });
+  var r=document.getElementById('res'), h='';
+  h+='<div class="score">'+ok+' / '+N+'</div>';
+  h+='<div class="hint">Nilai '+Math.round(ok/N*100)+'%. '+(wrong.length?('Ada '+wrong.length+' jawaban yang salah, penjelasannya di bawah.'):'Semua benar. Sempurna!')+'</div>';
+  if(wrong.length){
+    h+='<h2>Pembahasan jawaban yang salah</h2>';
+    wrong.forEach(function(i){
+      var x=Q[i];
+      h+='<div class="rv"><span class="tag">Soal '+(i+1)+' · '+esc(x.t)+'</span>';
+      if(x.p) h+='<div class="passage">'+esc(x.p)+'</div>';
+      h+='<p class="qt">'+esc(x.q)+'</p>';
+      h+='<div class="line"><b class="n">Jawabanmu:</b> '+(ans[i]+1)+'. '+esc(x.o[ans[i]])+'</div>';
+      h+='<div class="line"><b class="y">Yang benar:</b> '+(x.a+1)+'. '+esc(x.o[x.a])+'</div>';
+      h+='<p class="ex">'+esc(x.e)+'</p></div>';
+    });
+  }
+  h+='<div class="act"><button type="button" class="ghost" id="again">Ulangi kuis</button></div>';
+  r.innerHTML=h; r.hidden=false; btn.disabled=true;
+  document.getElementById('hint').textContent='Kuis selesai.';
+  r.scrollIntoView({behavior:'smooth',block:'start'});
+  document.getElementById('again').addEventListener('click',reset);
+});
+function reset(){
+  ans=new Array(N).fill(-1); done=false; form.classList.remove('locked');
+  document.getElementById('res').hidden=true; render(); update();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+render(); update();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Kuis N3 Hari 4</title>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: satu kolom sempit, soal berurutan, bilah progres menempel di atas, hasil muncul di bawah setelah Finish */
+:root{
+  --bg:#f6f7fa; --surface:#ffffff; --fg:#1b1f2a; --muted:#5c6475; --line:#d9dde6;
+  --accent:#2c4f9e; --accent-fg:#ffffff; --pick:#e6ecfa; --good:#17663a; --good-bg:#e3f3ea; --bad:#a32424; --bad-bg:#fbe7e7;
+  --font-body:'Inter','Noto Sans JP',system-ui,sans-serif; --font-jp:'Noto Sans JP','Hiragino Sans','Yu Gothic',sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12151c; --surface:#1b2029; --fg:#e8ebf2; --muted:#a2a9b8; --line:#333a48;
+  --accent:#8fb0ff; --accent-fg:#101624; --pick:#26324f; --good:#7ddba0; --good-bg:#17301f; --bad:#ff9d9d; --bad-bg:#3a1c1c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12151c; --surface:#1b2029; --fg:#e8ebf2; --muted:#a2a9b8; --line:#333a48;
+  --accent:#8fb0ff; --accent-fg:#101624; --pick:#26324f; --good:#7ddba0; --good-bg:#17301f; --bad:#ff9d9d; --bad-bg:#3a1c1c; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:16px;line-height:1.55}
+.wrap{max-width:720px;margin:0 auto;padding-block:20px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1{font-size:1.5rem;margin:0 0 4px;font-family:var(--font-jp);text-wrap:balance}
+.lead{color:var(--muted);margin:0 0 16px;font-size:.95rem}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:8px 0 10px;border-bottom:1px solid var(--line);margin-bottom:16px}
+.bar-row{display:flex;justify-content:space-between;gap:12px;font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.track{height:6px;background:var(--line);border-radius:3px;margin-top:6px;overflow:hidden}
+.fill{height:100%;width:0;background:var(--accent);transition:width .2s}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 14px 12px;margin:0 0 12px;min-width:0}
+.q legend{padding:0}
+.tag{display:inline-block;font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.qt{font-family:var(--font-jp);font-size:1.05rem;font-weight:500;margin:0 0 10px;overflow-wrap:anywhere}
+.passage{font-family:var(--font-jp);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:0 0 10px;font-size:.95rem;line-height:1.8}
+.opt{display:flex;gap:10px;align-items:flex-start;min-height:44px;padding:9px 10px;border:1px solid var(--line);border-radius:8px;margin-bottom:6px;cursor:pointer;font-family:var(--font-jp);overflow-wrap:anywhere}
+.opt input{margin-top:5px;accent-color:var(--accent);flex:none}
+.opt:has(input:checked){background:var(--pick);border-color:var(--accent)}
+.opt:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.locked .opt{cursor:default}
+.opt.right{background:var(--good-bg);border-color:var(--good)}
+.opt.wrong{background:var(--bad-bg);border-color:var(--bad)}
+.act{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:18px}
+button{font:inherit;min-height:44px;padding:0 20px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:var(--accent-fg);font-weight:600;cursor:pointer}
+button.ghost{background:transparent;color:var(--accent)}
+button:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.hint{color:var(--muted);font-size:.85rem}
+.res{margin-top:24px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
+.score{font-size:2.2rem;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.res h2{font-size:1.05rem;margin:18px 0 8px}
+.rv{border-top:1px solid var(--line);padding:12px 0}
+.rv .qt{margin-bottom:6px}
+.line{font-size:.92rem;font-family:var(--font-jp)}
+.line b.n{color:var(--bad)} .line b.y{color:var(--good)}
+.ex{margin:6px 0 0;font-size:.92rem;color:var(--muted)}
+</style>
+<style>[hidden]{display:none!important}img{max-width:100%}</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <h1>JLPT N3 クイズ · Hari 4</h1>
+  <p class="lead">27 soal dari materi Hari 4: bacaan kanji, arti kata, menulis kanji, bunpou, dan dokkai. Jawab semua, lalu tekan Finish.</p>
+
+  <div class="bar" role="status">
+    <div class="bar-row"><span id="cnt">Terjawab 0 / 27</span><span id="pct">0%</span></div>
+    <div class="track"><div class="fill" id="fill"></div></div>
+  </div>
+
+  <form id="quiz" novalidate></form>
+
+  <div class="act">
+    <button type="button" id="finish" disabled>Finish</button>
+    <span class="hint" id="hint">Tombol aktif setelah semua soal terjawab.</span>
+  </div>
+
+  <section class="res" id="res" hidden aria-live="polite"></section>
+</div>
+
+<script>
+var Q=[
+{
+"t": "Bacaan kanji",
+"q": "病院",
+"o": [
+"びょうんい",
+"びょうえん",
+"びょおいん",
+"びょういん"
+],
+"a": 3,
+"e": "病院 dibaca びょういん (rumah sakit)."
+},
+{
+"t": "Bacaan kanji",
+"q": "症状",
+"o": [
+"ちょうじょう",
+"しょじょう",
+"しょうじょう",
+"しょおじょう"
+],
+"a": 2,
+"e": "症状 dibaca しょうじょう (gejala)."
+},
+{
+"t": "Bacaan kanji",
+"q": "検査",
+"o": [
+"んけさ",
+"けさ",
+"けんさ",
+"げんさ"
+],
+"a": 2,
+"e": "検査 dibaca けんさ (pemeriksaan, tes)."
+},
+{
+"t": "Bacaan kanji",
+"q": "診察",
+"o": [
+"しんさづ",
+"しんさつ",
+"しさんつ",
+"ちんさつ"
+],
+"a": 1,
+"e": "診察 dibaca しんさつ (pemeriksaan dokter)."
+},
+{
+"t": "Bacaan kanji",
+"q": "入院",
+"o": [
+"にゅうんい",
+"にゅうい",
+"にゅういん",
+"にゅいうん"
+],
+"a": 2,
+"e": "入院 dibaca にゅういん (rawat inap)."
+},
+{
+"t": "Bacaan kanji",
+"q": "退院",
+"o": [
+"たいいん",
+"たいんい",
+"いたいん",
+"だいいん"
+],
+"a": 0,
+"e": "退院 dibaca たいいん (keluar rumah sakit)."
+},
+{
+"t": "Bacaan kanji",
+"q": "手術",
+"o": [
+"しゅうじゅつ",
+"しゅじゅす",
+"じゅじゅつ",
+"しゅじゅつ"
+],
+"a": 3,
+"e": "手術 dibaca しゅじゅつ (operasi)."
+},
+{
+"t": "Bacaan kanji",
+"q": "注射",
+"o": [
+"ちゅしゃ",
+"しゅうしゃ",
+"ちゅうじゃ",
+"ちゅうしゃ"
+],
+"a": 3,
+"e": "注射 dibaca ちゅうしゃ (suntikan)."
+},
+{
+"t": "Arti kata",
+"q": "睡眠",
+"o": [
+"tidur",
+"nutrisi, gizi",
+"rawat inap",
+"sama sekali tidak (+neg.)"
+],
+"a": 0,
+"e": "睡眠 (すいみん) berarti tidur."
+},
+{
+"t": "Arti kata",
+"q": "栄養",
+"o": [
+"operasi",
+"nutrisi, gizi",
+"seperti biasa",
+"lambat laun"
+],
+"a": 1,
+"e": "栄養 (えいよう) berarti nutrisi, gizi."
+},
+{
+"t": "Arti kata",
+"q": "予防",
+"o": [
+"pemeriksaan dokter",
+"rawat inap",
+"pencegahan",
+"gejala"
+],
+"a": 2,
+"e": "予防 (よぼう) berarti pencegahan."
+},
+{
+"t": "Arti kata",
+"q": "治る",
+"o": [
+"keluar rumah sakit",
+"obat",
+"tidur",
+"sembuh"
+],
+"a": 3,
+"e": "治る (なおる) berarti sembuh."
+},
+{
+"t": "Arti kata",
+"q": "相変わらず",
+"o": [
+"operasi",
+"keluar rumah sakit",
+"demam, panas",
+"seperti biasa"
+],
+"a": 3,
+"e": "相変わらず (あいかわらず) berarti seperti biasa."
+},
+{
+"t": "Menulis kanji",
+"q": "「けんこう」を漢字で書くと？",
+"o": [
+"鍵康",
+"建康",
+"健康",
+"健廉"
+],
+"a": 2,
+"e": "けんこう = 健康 (kesehatan)."
+},
+{
+"t": "Menulis kanji",
+"q": "「うんどう」を漢字で書くと？",
+"o": [
+"連動",
+"運勤",
+"運働",
+"運動"
+],
+"a": 3,
+"e": "うんどう = 運動 (olahraga)."
+},
+{
+"t": "Menulis kanji",
+"q": "「よぼう」を漢字で書くと？",
+"o": [
+"子防",
+"予防",
+"予訪",
+"予妨"
+],
+"a": 1,
+"e": "よぼう = 予防 (pencegahan)."
+},
+{
+"t": "Bunpou",
+"q": "この料理はとても辛（　　）です。",
+"o": [
+"らしい",
+"そう",
+"はずがない",
+"ような"
+],
+"a": 1,
+"e": "Kesan dari penampilan: Adj (tanpa い) + そうだ. 辛そうです = kelihatannya pedas."
+},
+{
+"t": "Bunpou",
+"q": "ニュースによると、来週は台風が来る（　　）。",
+"o": [
+"はずがありません",
+"ことです",
+"らしいです",
+"ばかりです"
+],
+"a": 2,
+"e": "Informasi dari berita memakai ～らしい: 来るらしいです = kabarnya akan datang."
+},
+{
+"t": "Bunpou",
+"q": "あの人が一人でこんな重い物を運べる（　　）。",
+"o": [
+"らしいです",
+"はずがありません",
+"ところです",
+"ようにです"
+],
+"a": 1,
+"e": "Menyatakan hal yang tidak mungkin: 運べるはずがありません = mustahil bisa membawanya."
+},
+{
+"t": "Bunpou",
+"q": "雨が今にも降り（　　）です。",
+"o": [
+"らしい",
+"はず",
+"そう",
+"ところ"
+],
+"a": 2,
+"e": "V-masu (tanpa ます) + そうだ: 降りそうです = tampaknya akan segera hujan."
+},
+{
+"t": "Bunpou",
+"q": "友達の話では、あの店のラーメンはおいしい（　　）。",
+"o": [
+"はずがありません",
+"ところです",
+"らしいです",
+"ばかりです"
+],
+"a": 2,
+"e": "Berdasarkan cerita orang lain: bentuk biasa + らしい. おいしいらしいです = kabarnya enak."
+},
+{
+"t": "Bunpou",
+"q": "一度も運動しない人が、マラソンで完走できる（　　）。",
+"o": [
+"らしいです",
+"ようです",
+"そうです",
+"はずがありません"
+],
+"a": 3,
+"e": "Konteks \"tidak pernah olahraga\" menunjuk pada ketidakmungkinan: 完走できるはずがありません."
+},
+{
+"t": "Bunpou",
+"q": "「よい」＋そうだ ＝ （　　）",
+"o": [
+"よいそう",
+"よくそう",
+"よさそう",
+"いそう"
+],
+"a": 2,
+"e": "Adj い: buang い lalu tambah そう; khusus よい menjadi よさそう, ない menjadi なさそう."
+},
+{
+"t": "Dokkai 1",
+"q": "医者は何と言いましたか。",
+"o": [
+"入院しなければならない",
+"入院は必要ない",
+"すぐ手術をする",
+"来週退院できる"
+],
+"a": 1,
+"e": "症状は重くなさそうなので、入院は必要ありません: tidak perlu rawat inap.",
+"p": "昨日、病院で検査を受けました。医者の話では、症状は重くなさそうなので、入院は必要ありません。でも、一週間は薬を飲んで、運動を控えるように言われました。来週、もう一度診察に行きます。"
+},
+{
+"t": "Dokkai 1",
+"q": "来週、「私」は何をしますか。",
+"o": [
+"手術を受ける",
+"運動を始める",
+"もう一度診察に行く",
+"薬をやめる"
+],
+"a": 2,
+"e": "来週、もう一度診察に行きます: minggu depan ia kembali diperiksa dokter.",
+"p": "昨日、病院で検査を受けました。医者の話では、症状は重くなさそうなので、入院は必要ありません。でも、一週間は薬を飲んで、運動を控えるように言われました。来週、もう一度診察に行きます。"
+},
+{
+"t": "Dokkai 2",
+"q": "田中さんについて、合っているのはどれですか。",
+"o": [
+"顔色が悪そうだ",
+"毎晩早く寝ている",
+"運動が好きだ",
+"病院に入院している"
+],
+"a": 0,
+"e": "最近、顔色が悪そうです: akhir-akhir ini wajahnya tampak pucat.",
+"p": "田中さんは最近、顔色が悪そうです。友達の話では、毎晩遅くまで残業しているらしいです。睡眠が足りなければ、健康でいられるはずがありません。少なくとも六時間は寝るほうがいいと思います。"
+},
+{
+"t": "Dokkai 2",
+"q": "「私」の考えは何ですか。",
+"o": [
+"残業をもっと増やすべきだ",
+"少なくとも六時間は寝るほうがいい",
+"薬を飲めばいい",
+"運動を休むべきだ"
+],
+"a": 1,
+"e": "少なくとも六時間は寝るほうがいいと思います: sebaiknya tidur setidaknya enam jam.",
+"p": "田中さんは最近、顔色が悪そうです。友達の話では、毎晩遅くまで残業しているらしいです。睡眠が足りなければ、健康でいられるはずがありません。少なくとも六時間は寝るほうがいいと思います。"
+}
+];
+var N=Q.length, ans=new Array(N).fill(-1), done=false;
+var form=document.getElementById('quiz'), btn=document.getElementById('finish');
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function render(){
+  var h='';
+  Q.forEach(function(x,i){
+    h+='<fieldset class="q" id="q'+i+'" style="border:1px solid var(--line)"><legend><span class="tag">'+(i+1)+' / '+N+' · '+esc(x.t)+'</span></legend>';
+    if(x.p) h+='<div class="passage">'+esc(x.p)+'</div>';
+    h+='<p class="qt">'+esc(x.q)+'</p>';
+    x.o.forEach(function(o,j){
+      h+='<label class="opt" id="o'+i+'_'+j+'"><input type="radio" name="q'+i+'" id="r'+i+'_'+j+'" value="'+j+'"><span>'+(j+1)+'. '+esc(o)+'</span></label>';
+    });
+    h+='</fieldset>';
+  });
+  form.innerHTML=h;
+}
+function update(){
+  var n=ans.filter(function(v){return v>=0;}).length;
+  document.getElementById('cnt').textContent='Terjawab '+n+' / '+N;
+  document.getElementById('pct').textContent=Math.round(n/N*100)+'%';
+  document.getElementById('fill').style.width=(n/N*100)+'%';
+  btn.disabled=(n<N)||done;
+  document.getElementById('hint').textContent=n<N?'Tombol aktif setelah semua soal terjawab ('+(N-n)+' lagi).':'Semua terjawab. Tekan Finish untuk melihat hasil.';
+}
+form.addEventListener('change',function(e){
+  if(done||!e.target.name)return;
+  var i=parseInt(e.target.name.slice(1),10);
+  ans[i]=parseInt(e.target.value,10);
+  update();
+});
+btn.addEventListener('click',function(){
+  done=true; form.classList.add('locked');
+  var ok=0, wrong=[];
+  Q.forEach(function(x,i){
+    document.getElementById('r'+i+'_0');
+    for(var j=0;j<x.o.length;j++){document.getElementById('r'+i+'_'+j).disabled=true;}
+    document.getElementById('o'+i+'_'+x.a).classList.add('right');
+    if(ans[i]===x.a){ok++;} else {wrong.push(i); document.getElementById('o'+i+'_'+ans[i]).classList.add('wrong');}
+  });
+  var r=document.getElementById('res'), h='';
+  h+='<div class="score">'+ok+' / '+N+'</div>';
+  h+='<div class="hint">Nilai '+Math.round(ok/N*100)+'%. '+(wrong.length?('Ada '+wrong.length+' jawaban yang salah, penjelasannya di bawah.'):'Semua benar. Sempurna!')+'</div>';
+  if(wrong.length){
+    h+='<h2>Pembahasan jawaban yang salah</h2>';
+    wrong.forEach(function(i){
+      var x=Q[i];
+      h+='<div class="rv"><span class="tag">Soal '+(i+1)+' · '+esc(x.t)+'</span>';
+      if(x.p) h+='<div class="passage">'+esc(x.p)+'</div>';
+      h+='<p class="qt">'+esc(x.q)+'</p>';
+      h+='<div class="line"><b class="n">Jawabanmu:</b> '+(ans[i]+1)+'. '+esc(x.o[ans[i]])+'</div>';
+      h+='<div class="line"><b class="y">Yang benar:</b> '+(x.a+1)+'. '+esc(x.o[x.a])+'</div>';
+      h+='<p class="ex">'+esc(x.e)+'</p></div>';
+    });
+  }
+  h+='<div class="act"><button type="button" class="ghost" id="again">Ulangi kuis</button></div>';
+  r.innerHTML=h; r.hidden=false; btn.disabled=true;
+  document.getElementById('hint').textContent='Kuis selesai.';
+  r.scrollIntoView({behavior:'smooth',block:'start'});
+  document.getElementById('again').addEventListener('click',reset);
+});
+function reset(){
+  ans=new Array(N).fill(-1); done=false; form.classList.remove('locked');
+  document.getElementById('res').hidden=true; render(); update();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+render(); update();
+</script>
+
+</body>
+</html>

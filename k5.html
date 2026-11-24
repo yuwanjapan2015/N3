@@ -1,0 +1,482 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Kuis N3 Hari 5</title>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Inter:wght@400;500;600&display=swap">
+<style>
+/* Layout: satu kolom sempit, soal berurutan, bilah progres menempel di atas, hasil muncul di bawah setelah Finish */
+:root{
+  --bg:#f6f7fa; --surface:#ffffff; --fg:#1b1f2a; --muted:#5c6475; --line:#d9dde6;
+  --accent:#2c4f9e; --accent-fg:#ffffff; --pick:#e6ecfa; --good:#17663a; --good-bg:#e3f3ea; --bad:#a32424; --bad-bg:#fbe7e7;
+  --font-body:'Inter','Noto Sans JP',system-ui,sans-serif; --font-jp:'Noto Sans JP','Hiragino Sans','Yu Gothic',sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12151c; --surface:#1b2029; --fg:#e8ebf2; --muted:#a2a9b8; --line:#333a48;
+  --accent:#8fb0ff; --accent-fg:#101624; --pick:#26324f; --good:#7ddba0; --good-bg:#17301f; --bad:#ff9d9d; --bad-bg:#3a1c1c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12151c; --surface:#1b2029; --fg:#e8ebf2; --muted:#a2a9b8; --line:#333a48;
+  --accent:#8fb0ff; --accent-fg:#101624; --pick:#26324f; --good:#7ddba0; --good-bg:#17301f; --bad:#ff9d9d; --bad-bg:#3a1c1c; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:16px;line-height:1.55}
+.wrap{max-width:720px;margin:0 auto;padding-block:20px 56px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1{font-size:1.5rem;margin:0 0 4px;font-family:var(--font-jp);text-wrap:balance}
+.lead{color:var(--muted);margin:0 0 16px;font-size:.95rem}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:8px 0 10px;border-bottom:1px solid var(--line);margin-bottom:16px}
+.bar-row{display:flex;justify-content:space-between;gap:12px;font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.track{height:6px;background:var(--line);border-radius:3px;margin-top:6px;overflow:hidden}
+.fill{height:100%;width:0;background:var(--accent);transition:width .2s}
+.q{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 14px 12px;margin:0 0 12px;min-width:0}
+.q legend{padding:0}
+.tag{display:inline-block;font-size:.72rem;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.qt{font-family:var(--font-jp);font-size:1.05rem;font-weight:500;margin:0 0 10px;overflow-wrap:anywhere}
+.passage{font-family:var(--font-jp);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:0 0 10px;font-size:.95rem;line-height:1.8}
+.opt{display:flex;gap:10px;align-items:flex-start;min-height:44px;padding:9px 10px;border:1px solid var(--line);border-radius:8px;margin-bottom:6px;cursor:pointer;font-family:var(--font-jp);overflow-wrap:anywhere}
+.opt input{margin-top:5px;accent-color:var(--accent);flex:none}
+.opt:has(input:checked){background:var(--pick);border-color:var(--accent)}
+.opt:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.locked .opt{cursor:default}
+.opt.right{background:var(--good-bg);border-color:var(--good)}
+.opt.wrong{background:var(--bad-bg);border-color:var(--bad)}
+.act{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:18px}
+button{font:inherit;min-height:44px;padding:0 20px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:var(--accent-fg);font-weight:600;cursor:pointer}
+button.ghost{background:transparent;color:var(--accent)}
+button:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.hint{color:var(--muted);font-size:.85rem}
+.res{margin-top:24px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px}
+.score{font-size:2.2rem;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.res h2{font-size:1.05rem;margin:18px 0 8px}
+.rv{border-top:1px solid var(--line);padding:12px 0}
+.rv .qt{margin-bottom:6px}
+.line{font-size:.92rem;font-family:var(--font-jp)}
+.line b.n{color:var(--bad)} .line b.y{color:var(--good)}
+.ex{margin:6px 0 0;font-size:.92rem;color:var(--muted)}
+</style>
+<style>[hidden]{display:none!important}img{max-width:100%}</style>
+</head>
+<body>
+
+
+<div class="wrap">
+  <h1>JLPT N3 クイズ · Hari 5</h1>
+  <p class="lead">27 soal dari materi Hari 5: bacaan kanji, arti kata, menulis kanji, bunpou, dan dokkai. Jawab semua, lalu tekan Finish.</p>
+
+  <div class="bar" role="status">
+    <div class="bar-row"><span id="cnt">Terjawab 0 / 27</span><span id="pct">0%</span></div>
+    <div class="track"><div class="fill" id="fill"></div></div>
+  </div>
+
+  <form id="quiz" novalidate></form>
+
+  <div class="act">
+    <button type="button" id="finish" disabled>Finish</button>
+    <span class="hint" id="hint">Tombol aktif setelah semua soal terjawab.</span>
+  </div>
+
+  <section class="res" id="res" hidden aria-live="polite"></section>
+</div>
+
+<script>
+var Q=[
+{
+"t": "Bacaan kanji",
+"q": "旅行",
+"o": [
+"りょうこう",
+"りょうこ",
+"りょこう",
+"りょこお"
+],
+"a": 2,
+"e": "旅行 dibaca りょこう (bepergian, wisata)."
+},
+{
+"t": "Bacaan kanji",
+"q": "出発",
+"o": [
+"しゅぱつ",
+"しゅうっぱつ",
+"しゅっぱつ",
+"しゅっぱづ"
+],
+"a": 2,
+"e": "出発 dibaca しゅっぱつ (berangkat)."
+},
+{
+"t": "Bacaan kanji",
+"q": "到着",
+"o": [
+"とおちゃく",
+"どうちゃく",
+"とうちゃく",
+"うとちゃく"
+],
+"a": 2,
+"e": "到着 dibaca とうちゃく (tiba)."
+},
+{
+"t": "Bacaan kanji",
+"q": "予約",
+"o": [
+"よくや",
+"よやぐ",
+"よやく",
+"ゆやく"
+],
+"a": 2,
+"e": "予約 dibaca よやく (reservasi, memesan)."
+},
+{
+"t": "Bacaan kanji",
+"q": "空港",
+"o": [
+"うくこう",
+"くうこう",
+"くこうう",
+"くうこ"
+],
+"a": 1,
+"e": "空港 dibaca くうこう (bandara)."
+},
+{
+"t": "Bacaan kanji",
+"q": "切符",
+"o": [
+"きっぶ",
+"きっぷ",
+"きつぷ",
+"ぎっぷ"
+],
+"a": 1,
+"e": "切符 dibaca きっぷ (tiket)."
+},
+{
+"t": "Bacaan kanji",
+"q": "渋滞",
+"o": [
+"じゅたい",
+"じゅういた",
+"じゅうだい",
+"じゅうたい"
+],
+"a": 3,
+"e": "渋滞 dibaca じゅうたい (kemacetan)."
+},
+{
+"t": "Bacaan kanji",
+"q": "観光",
+"o": [
+"んかこう",
+"がんこう",
+"かんこう",
+"かこう"
+],
+"a": 2,
+"e": "観光 dibaca かんこう (wisata, tamasya)."
+},
+{
+"t": "Arti kata",
+"q": "宿泊",
+"o": [
+"pemandu, informasi",
+"bepergian, wisata",
+"jadwal (kereta/bus)",
+"menginap"
+],
+"a": 3,
+"e": "宿泊 (しゅくはく) berarti menginap."
+},
+{
+"t": "Arti kata",
+"q": "荷物",
+"o": [
+"jadwal (kereta/bus)",
+"pemandu, informasi",
+"bagasi, barang bawaan",
+"bepergian, wisata"
+],
+"a": 2,
+"e": "荷物 (にもつ) berarti bagasi, barang bawaan."
+},
+{
+"t": "Arti kata",
+"q": "運賃",
+"o": [
+"ongkos angkut",
+"pindah kereta",
+"reservasi, memesan",
+"setelah lama"
+],
+"a": 0,
+"e": "運賃 (うんちん) berarti ongkos angkut."
+},
+{
+"t": "Arti kata",
+"q": "時刻表",
+"o": [
+"setelah lama",
+"jadwal (kereta/bus)",
+"pemandangan",
+"ongkos angkut"
+],
+"a": 1,
+"e": "時刻表 (じこくひょう) berarti jadwal (kereta/bus)."
+},
+{
+"t": "Arti kata",
+"q": "案内",
+"o": [
+"ongkos angkut",
+"menginap",
+"tiba-tiba",
+"pemandu, informasi"
+],
+"a": 3,
+"e": "案内 (あんない) berarti pemandu, informasi."
+},
+{
+"t": "Menulis kanji",
+"q": "「くうこう」を漢字で書くと？",
+"o": [
+"空港",
+"宙港",
+"空洪",
+"空巷"
+],
+"a": 0,
+"e": "くうこう = 空港 (bandara)."
+},
+{
+"t": "Menulis kanji",
+"q": "「よやく」を漢字で書くと？",
+"o": [
+"予約",
+"予納",
+"矛約",
+"子約"
+],
+"a": 0,
+"e": "よやく = 予約 (reservasi, memesan)."
+},
+{
+"t": "Menulis kanji",
+"q": "「ながめ」を漢字で書くと？",
+"o": [
+"桃め",
+"跳め",
+"眺目",
+"眺め"
+],
+"a": 3,
+"e": "ながめ = 眺め (pemandangan)."
+},
+{
+"t": "Bunpou",
+"q": "私は北海道へ行った（　　）があります。",
+"o": [
+"はず",
+"こと",
+"ところ",
+"よう"
+],
+"a": 1,
+"e": "V-た + ことがある = pernah melakukan: 行ったことがあります."
+},
+{
+"t": "Bunpou",
+"q": "駅でたまに友達に会う（　　）があります。",
+"o": [
+"こと",
+"はず",
+"ところ",
+"ため"
+],
+"a": 0,
+"e": "V kamus + ことがある = kadang-kadang: 会うことがあります."
+},
+{
+"t": "Bunpou",
+"q": "この本は読めば読む（　　）、面白くなります。",
+"o": [
+"ため",
+"ところ",
+"ばかり",
+"ほど"
+],
+"a": 3,
+"e": "Pola V-ば + V kamus + ほど = makin ... makin ...: 読めば読むほど."
+},
+{
+"t": "Bunpou",
+"q": "練習すれば（　　）ほど、上手になります。",
+"o": [
+"した",
+"する",
+"して",
+"しない"
+],
+"a": 1,
+"e": "Setelah ば: V-ば + V kamus + ほど. すればするほど = makin dilakukan makin ..."
+},
+{
+"t": "Bunpou",
+"q": "ニュース（　　）、明日は大雪になるらしいです。",
+"o": [
+"について",
+"にとって",
+"によると",
+"によって"
+],
+"a": 2,
+"e": "Sumber informasi: N + によると. ニュースによると = menurut berita."
+},
+{
+"t": "Bunpou",
+"q": "先生の話（　　）、試験は来週です。",
+"o": [
+"によると",
+"によって",
+"にとって",
+"について"
+],
+"a": 0,
+"e": "先生の話によると = menurut penjelasan guru; によると dipakai untuk sumber kabar."
+},
+{
+"t": "Bunpou",
+"q": "私は一度も寿司を食べた（　　）がありません。",
+"o": [
+"ところ",
+"ため",
+"こと",
+"よう"
+],
+"a": 2,
+"e": "V-た + ことがない = belum pernah: 食べたことがありません."
+},
+{
+"t": "Dokkai 1",
+"q": "旅行の日の天気はどうでしたか。",
+"o": [
+"一日中雨だった",
+"雪が降った",
+"風が強かった",
+"いい天気になった"
+],
+"a": 3,
+"e": "雨のはずでしたが、偶然いい天気になりました: ternyata cuacanya cerah.",
+"p": "先週、友達と京都を旅行しました。天気予報によると、雨のはずでしたが、偶然いい天気になりました。電車の乗り換えで少し遠回りしましたが、なんとか観光地に到着しました。眺めがよくて、ずっと見ていたいと思いました。"
+},
+{
+"t": "Dokkai 1",
+"q": "「私」は眺めを見て、どう思いましたか。",
+"o": [
+"すぐ帰りたい",
+"ずっと見ていたい",
+"遠回りが楽しかった",
+"乗り換えが好きだ"
+],
+"a": 1,
+"e": "眺めがよくて、ずっと見ていたいと思いました: ingin terus memandanginya.",
+"p": "先週、友達と京都を旅行しました。天気予報によると、雨のはずでしたが、偶然いい天気になりました。電車の乗り換えで少し遠回りしましたが、なんとか観光地に到着しました。眺めがよくて、ずっと見ていたいと思いました。"
+},
+{
+"t": "Dokkai 2",
+"q": "バスを使わない理由は何ですか。",
+"o": [
+"運賃が高いから",
+"予約がないから",
+"渋滞でバスの時間が分からないから",
+"出口が遠いから"
+],
+"a": 2,
+"e": "渋滞のため、バスは時間が分からないらしい: karena macet, waktu bus tidak pasti.",
+"p": "空港までは電車で一時間かかります。渋滞のため、バスは時間が分からないらしいです。時刻表を見ると、出発は九時ですから、八時までに空港に着くほうがいいです。切符は予約してあります。"
+},
+{
+"t": "Dokkai 2",
+"q": "何時までに空港に着くほうがいいですか。",
+"o": [
+"七時",
+"八時",
+"九時",
+"十時"
+],
+"a": 1,
+"e": "出発は九時ですから、八時までに空港に着くほうがいい: sebaiknya tiba sebelum jam 8.",
+"p": "空港までは電車で一時間かかります。渋滞のため、バスは時間が分からないらしいです。時刻表を見ると、出発は九時ですから、八時までに空港に着くほうがいいです。切符は予約してあります。"
+}
+];
+var N=Q.length, ans=new Array(N).fill(-1), done=false;
+var form=document.getElementById('quiz'), btn=document.getElementById('finish');
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function render(){
+  var h='';
+  Q.forEach(function(x,i){
+    h+='<fieldset class="q" id="q'+i+'" style="border:1px solid var(--line)"><legend><span class="tag">'+(i+1)+' / '+N+' · '+esc(x.t)+'</span></legend>';
+    if(x.p) h+='<div class="passage">'+esc(x.p)+'</div>';
+    h+='<p class="qt">'+esc(x.q)+'</p>';
+    x.o.forEach(function(o,j){
+      h+='<label class="opt" id="o'+i+'_'+j+'"><input type="radio" name="q'+i+'" id="r'+i+'_'+j+'" value="'+j+'"><span>'+(j+1)+'. '+esc(o)+'</span></label>';
+    });
+    h+='</fieldset>';
+  });
+  form.innerHTML=h;
+}
+function update(){
+  var n=ans.filter(function(v){return v>=0;}).length;
+  document.getElementById('cnt').textContent='Terjawab '+n+' / '+N;
+  document.getElementById('pct').textContent=Math.round(n/N*100)+'%';
+  document.getElementById('fill').style.width=(n/N*100)+'%';
+  btn.disabled=(n<N)||done;
+  document.getElementById('hint').textContent=n<N?'Tombol aktif setelah semua soal terjawab ('+(N-n)+' lagi).':'Semua terjawab. Tekan Finish untuk melihat hasil.';
+}
+form.addEventListener('change',function(e){
+  if(done||!e.target.name)return;
+  var i=parseInt(e.target.name.slice(1),10);
+  ans[i]=parseInt(e.target.value,10);
+  update();
+});
+btn.addEventListener('click',function(){
+  done=true; form.classList.add('locked');
+  var ok=0, wrong=[];
+  Q.forEach(function(x,i){
+    document.getElementById('r'+i+'_0');
+    for(var j=0;j<x.o.length;j++){document.getElementById('r'+i+'_'+j).disabled=true;}
+    document.getElementById('o'+i+'_'+x.a).classList.add('right');
+    if(ans[i]===x.a){ok++;} else {wrong.push(i); document.getElementById('o'+i+'_'+ans[i]).classList.add('wrong');}
+  });
+  var r=document.getElementById('res'), h='';
+  h+='<div class="score">'+ok+' / '+N+'</div>';
+  h+='<div class="hint">Nilai '+Math.round(ok/N*100)+'%. '+(wrong.length?('Ada '+wrong.length+' jawaban yang salah, penjelasannya di bawah.'):'Semua benar. Sempurna!')+'</div>';
+  if(wrong.length){
+    h+='<h2>Pembahasan jawaban yang salah</h2>';
+    wrong.forEach(function(i){
+      var x=Q[i];
+      h+='<div class="rv"><span class="tag">Soal '+(i+1)+' · '+esc(x.t)+'</span>';
+      if(x.p) h+='<div class="passage">'+esc(x.p)+'</div>';
+      h+='<p class="qt">'+esc(x.q)+'</p>';
+      h+='<div class="line"><b class="n">Jawabanmu:</b> '+(ans[i]+1)+'. '+esc(x.o[ans[i]])+'</div>';
+      h+='<div class="line"><b class="y">Yang benar:</b> '+(x.a+1)+'. '+esc(x.o[x.a])+'</div>';
+      h+='<p class="ex">'+esc(x.e)+'</p></div>';
+    });
+  }
+  h+='<div class="act"><button type="button" class="ghost" id="again">Ulangi kuis</button></div>';
+  r.innerHTML=h; r.hidden=false; btn.disabled=true;
+  document.getElementById('hint').textContent='Kuis selesai.';
+  r.scrollIntoView({behavior:'smooth',block:'start'});
+  document.getElementById('again').addEventListener('click',reset);
+});
+function reset(){
+  ans=new Array(N).fill(-1); done=false; form.classList.remove('locked');
+  document.getElementById('res').hidden=true; render(); update();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+render(); update();
+</script>
+
+</body>
+</html>
